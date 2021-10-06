@@ -592,7 +592,7 @@ function select_group(ctx){
         keyboard.push([
           {
             text: groups[index].course,
-            callback_data: "gr" + index,
+            callback_data: "тест",
           }
         ])
         
@@ -607,6 +607,56 @@ function select_group(ctx){
   });
   
 }
+
+bot.action("тест", (ctx) => {
+  console.log("trigger")
+  db.query(`SELECT course FROM timetable`, function (err, groups) {
+    if (err) {
+      logger("DB Error", `Помилка отримання даних з БД`, err);
+    } else {
+      for (let index = 0; index < groups.length; index++) {
+        if (ctx.callbackQuery.data == groups[index].course) {
+          db.query(
+            `UPDATE users SET group_type='${ctx.callbackQuery.data}' WHERE chat_id=${ctx.chat.id}`,
+            function (err) {
+              if (err) {
+                ctx.telegram.sendMessage(
+                  ctx.chat.id,
+                  "Упс.. Сталась помилка 😰"
+                );
+                logger(
+                  "DB Error",
+                  `Помилка оновлення групи для користувача ${ctx.chat.id}`,
+                  err
+                );
+              } else {
+                logger(
+                  "Group",
+                  `Встановлено групу ${ctx.callbackQuery.data} для користувача ${ctx.chat.id}`,
+                  err
+                );
+                ctx.editMessageText("⚙️ Налаштування групи", {
+                  parse_mode: "markdown",
+                  reply_markup: {
+                    inline_keyboard: [
+                      [
+                        {
+                          text: "Вашу групу було оновлено ♻️",
+                          callback_data: "group_updated",
+                        },
+                      ],
+                    ],
+                  },
+                });
+              }
+            }
+          );
+        }
+      }
+    }
+  });
+});
+
 
 var set1, set2;
 
@@ -769,55 +819,6 @@ bot.action("NZ", (ctx) => {
       }
     }
   );
-});
-
-bot.action("gr0", (ctx) => {
-  console.log("trigger")
-  db.query(`SELECT course FROM timetable`, function (err, groups) {
-    if (err) {
-      logger("DB Error", `Помилка отримання даних з БД`, err);
-    } else {
-      for (let index = 0; index < groups.length; index++) {
-        if (ctx.callbackQuery.data == groups[index].course) {
-          db.query(
-            `UPDATE users SET group_type='${ctx.callbackQuery.data}' WHERE chat_id=${ctx.chat.id}`,
-            function (err) {
-              if (err) {
-                ctx.telegram.sendMessage(
-                  ctx.chat.id,
-                  "Упс.. Сталась помилка 😰"
-                );
-                logger(
-                  "DB Error",
-                  `Помилка оновлення групи для користувача ${ctx.chat.id}`,
-                  err
-                );
-              } else {
-                logger(
-                  "Group",
-                  `Встановлено групу ${ctx.callbackQuery.data} для користувача ${ctx.chat.id}`,
-                  err
-                );
-                ctx.editMessageText("⚙️ Налаштування групи", {
-                  parse_mode: "markdown",
-                  reply_markup: {
-                    inline_keyboard: [
-                      [
-                        {
-                          text: "Вашу групу було оновлено ♻️",
-                          callback_data: "group_updated",
-                        },
-                      ],
-                    ],
-                  },
-                });
-              }
-            }
-          );
-        }
-      }
-    }
-  });
 });
 
 var j = schedule.scheduleJob("9 9 9 * * *", function () {
