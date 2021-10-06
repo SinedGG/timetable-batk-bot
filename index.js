@@ -592,7 +592,7 @@ function select_group(ctx){
         keyboard.push([
           {
             text: groups[index].course,
-            callback_data: "тест",
+            callback_data: "К-11М",
           }
         ])
         
@@ -608,7 +608,7 @@ function select_group(ctx){
   
 }
 
-bot.action("тест", (ctx) => {
+bot.action("К-11М", (ctx) => {
   console.log("trigger")
   db.query(`SELECT course FROM timetable`, function (err, groups) {
     if (err) {
