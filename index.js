@@ -771,7 +771,7 @@ bot.action("NZ", (ctx) => {
   );
 });
 
-bot.action(triggerAsyncId, (ctx) => {
+bot.action("K-41M", (ctx) => {
   console.log("trigger")
   db.query(`SELECT course FROM timetable`, function (err, groups) {
     if (err) {
