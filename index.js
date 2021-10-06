@@ -588,7 +588,7 @@ function select_group(ctx){
       logger("DB Error", `Помилка отримання даних з БД`, err);
     }else{
       var keyboard = [];
-      for (let index = 0; index < groups.length; index++) {
+      for (let index = 0; index < 10; index++) {
         keyboard.push([
           {
             text: groups[index].course,
@@ -771,7 +771,7 @@ bot.action("NZ", (ctx) => {
   );
 });
 
-bot.action("K-41M", (ctx) => {
+bot.action(triggerAsyncId, (ctx) => {
   console.log("trigger")
   db.query(`SELECT course FROM timetable`, function (err, groups) {
     if (err) {
