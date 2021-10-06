@@ -609,7 +609,101 @@ function select_group(ctx){
 }
 
 bot.on('callback_query', (ctx) => {
-  console.log("trigger")
+  if(ctx.callbackQuery.data == "NN"){
+    db.query(
+      `SELECT notification_n, notification_z FROM users WHERE chat_id=${ctx.chat.id}`,
+      function (err, setting) {
+        if (err) {
+          logger("DB Error", `помилка отримання notification_n, notification_z для крористувача ${ctx.chat.id}`, err);
+        } else {
+          if (setting[0].notification_n) {
+            db.query(
+              `UPDATE users Set notification_n=false WHERE chat_id=${ctx.chat.id}`,
+              function (err) {
+                if (err) {
+                  logger("DB Error", `помилка оновлення notification_n=false для крористувача ${ctx.chat.id}`, err);
+                } else {
+                  set1 = "❌";
+                  if (setting[0].notification_z) {
+                    set2 = "✔️";
+                  } else {
+                    set2 = "❌";
+                  }
+                  EditInline(ctx, set1, set2);
+                  logger("Notification", `Cповіщення нового розкладу вимкнуто для користувача ${ctx.chat.id}`, err);
+                }
+              }
+            );
+          } else {
+            db.query(
+              `UPDATE users Set notification_n=true WHERE chat_id=${ctx.chat.id}`,
+              function (err) {
+                if (err) {
+                  logger("DB Error", `Помилка оновлення notification_n=true для крористувача ${ctx.chat.id}`, err);
+                } else {
+                  set1 = "✔️";
+                  if (setting[0].notification_z) {
+                    set2 = "✔️";
+                  } else {
+                    set2 = "❌";
+                  }
+                  EditInline(ctx, set1, set2);
+                  logger("Notification", `Cповіщення нового розкладу увімкнено для користувача ${ctx.chat.id}`, err);
+                }
+              }
+            );
+          }
+        }
+      }
+    );
+  }if(ctx.callbackQuery.data == "NZ"){
+    db.query(
+      `SELECT notification_n, notification_z FROM users WHERE chat_id=${ctx.chat.id}`,
+      function (err, setting) {
+        if (err) {
+          logger("DB Error", `помилка отримання notification_n, notification_z для крористувача ${ctx.chat.id}`, err);
+        } else {
+          if (setting[0].notification_z) {
+            db.query(
+              `UPDATE users Set notification_z=false WHERE chat_id=${ctx.chat.id}`,
+              function (err) {
+                if (err) {
+                  logger("DB Error", `помилка оновлення notification_z=false для крористувача ${ctx.chat.id}`, err);
+                } else {
+                  set2 = "❌";
+                  if (setting[0].notification_n) {
+                    set1 = "✔️";
+                  } else {
+                    set1 = "❌";
+                  }
+                  EditInline(ctx, set1, set2);
+                  logger("Notification", `Cповіщення змін в розкладі вимкнуто для користувача ${ctx.chat.id}`, err);
+                }
+              }
+            );
+          } else {
+            db.query(
+              `UPDATE users Set notification_z=true WHERE chat_id=${ctx.chat.id}`,
+              function (err) {
+                if (err) {
+                  logger("DB Error", `помилка оновлення notification_z=false для крористувача ${ctx.chat.id}`, err);
+                } else {
+                  set2 = "✔️";
+                  if (setting[0].notification_n) {
+                    set1 = "✔️";
+                  } else {
+                    set1 = "❌";
+                  }
+                  EditInline(ctx, set1, set2);
+                  logger("Notification", `Cповіщення змін в розкладі увімкнено для користувача ${ctx.chat.id}`, err);
+                }
+              }
+            );
+          }
+        }
+      }
+    );
+  }else{
   db.query(`SELECT course FROM timetable`, function (err, groups) {
     if (err) {
       logger("DB Error", `Помилка отримання даних з БД`, err);
@@ -655,6 +749,7 @@ bot.on('callback_query', (ctx) => {
       }
     }
   });
+}
 });
 
 var set1, set2;
@@ -711,52 +806,7 @@ bot.hears("🔔 Сповіщення", (ctx) => {
 });
 
 bot.action("NN", (ctx) => {
-  db.query(
-    `SELECT notification_n, notification_z FROM users WHERE chat_id=${ctx.chat.id}`,
-    function (err, setting) {
-      if (err) {
-        logger("DB Error", `помилка отримання notification_n, notification_z для крористувача ${ctx.chat.id}`, err);
-      } else {
-        if (setting[0].notification_n) {
-          db.query(
-            `UPDATE users Set notification_n=false WHERE chat_id=${ctx.chat.id}`,
-            function (err) {
-              if (err) {
-                logger("DB Error", `помилка оновлення notification_n=false для крористувача ${ctx.chat.id}`, err);
-              } else {
-                set1 = "❌";
-                if (setting[0].notification_z) {
-                  set2 = "✔️";
-                } else {
-                  set2 = "❌";
-                }
-                EditInline(ctx, set1, set2);
-                logger("Notification", `Cповіщення нового розкладу вимкнуто для користувача ${ctx.chat.id}`, err);
-              }
-            }
-          );
-        } else {
-          db.query(
-            `UPDATE users Set notification_n=true WHERE chat_id=${ctx.chat.id}`,
-            function (err) {
-              if (err) {
-                logger("DB Error", `Помилка оновлення notification_n=true для крористувача ${ctx.chat.id}`, err);
-              } else {
-                set1 = "✔️";
-                if (setting[0].notification_z) {
-                  set2 = "✔️";
-                } else {
-                  set2 = "❌";
-                }
-                EditInline(ctx, set1, set2);
-                logger("Notification", `Cповіщення нового розкладу увімкнено для користувача ${ctx.chat.id}`, err);
-              }
-            }
-          );
-        }
-      }
-    }
-  );
+  
 });
 
 function EditInline(ctx, set1, set2) {
@@ -772,52 +822,7 @@ function EditInline(ctx, set1, set2) {
 }
 
 bot.action("NZ", (ctx) => {
-  db.query(
-    `SELECT notification_n, notification_z FROM users WHERE chat_id=${ctx.chat.id}`,
-    function (err, setting) {
-      if (err) {
-        logger("DB Error", `помилка отримання notification_n, notification_z для крористувача ${ctx.chat.id}`, err);
-      } else {
-        if (setting[0].notification_z) {
-          db.query(
-            `UPDATE users Set notification_z=false WHERE chat_id=${ctx.chat.id}`,
-            function (err) {
-              if (err) {
-                logger("DB Error", `помилка оновлення notification_z=false для крористувача ${ctx.chat.id}`, err);
-              } else {
-                set2 = "❌";
-                if (setting[0].notification_n) {
-                  set1 = "✔️";
-                } else {
-                  set1 = "❌";
-                }
-                EditInline(ctx, set1, set2);
-                logger("Notification", `Cповіщення змін в розкладі вимкнуто для користувача ${ctx.chat.id}`, err);
-              }
-            }
-          );
-        } else {
-          db.query(
-            `UPDATE users Set notification_z=true WHERE chat_id=${ctx.chat.id}`,
-            function (err) {
-              if (err) {
-                logger("DB Error", `помилка оновлення notification_z=false для крористувача ${ctx.chat.id}`, err);
-              } else {
-                set2 = "✔️";
-                if (setting[0].notification_n) {
-                  set1 = "✔️";
-                } else {
-                  set1 = "❌";
-                }
-                EditInline(ctx, set1, set2);
-                logger("Notification", `Cповіщення змін в розкладі увімкнено для користувача ${ctx.chat.id}`, err);
-              }
-            }
-          );
-        }
-      }
-    }
-  );
+  
 });
 
 var j = schedule.scheduleJob("9 9 9 * * *", function () {
