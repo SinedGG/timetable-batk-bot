@@ -34,9 +34,9 @@ function logger(type, text, err) {
   if (err == undefined) {
     err = "";
   }
-  console.log(log_text + "  " + err + "\n");
+  console.log(log_text + "  " + err);
 
-  logtofile.write(log_text);
+  logtofile.write(log_text + "\r\n");
   bot.telegram.sendMessage(cfg.log_channel, log_text);
 }
 
