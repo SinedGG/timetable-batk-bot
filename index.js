@@ -130,7 +130,7 @@ bot.command("help", (ctx) => {
 });
 
 bot.command("version", (ctx) => {
-  ctx.reply("Vesion: " + config.get("version"));
+  ctx.reply("Vesion: " + cfg.version);
 });
 
 bot.command("stats", (ctx) => {
