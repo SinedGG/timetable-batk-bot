@@ -607,7 +607,7 @@ function select_group(ctx){
   
 }
 
-bot.action("К-11М", (ctx) => {
+bot.action(triggerAsyncId, (ctx) => {
   console.log("trigger")
   db.query(`SELECT course FROM timetable`, function (err, groups) {
     if (err) {
