@@ -1,31 +1,31 @@
 {
-  "name": "telegraf-clear",
-  "version": "0.0.1",
+  "name": "timetable-batk-bot",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/SinedGG/telegraf-clear.git"
-  },
-  "author": "Sined",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/SinedGG/telegraf-clear/issues"
-  },
-  "homepage": "https://github.com/SinedGG/telegraf-clear#readme",
   "dependencies": {
-    "convertapi": "^1.6.0",
     "dotenv": "^10.0.0",
     "moment-timezone": "^0.5.33",
     "mysql": "^2.18.1",
-    "node-schedule": "^1.3.3",
+    "node-schedule": "^2.0.0",
     "pdf-parse": "^1.1.1",
     "pdf-table-extractor": "^1.0.3",
     "request": "^2.88.2",
     "request-progress": "^3.0.0",
     "telegraf": "^4.4.2"
-  }
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SinedGG/Timetable-batk-bot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SinedGG/Timetable-batk-bot/issues"
+  },
+  "homepage": "https://github.com/SinedGG/Timetable-batk-bot#readme"
 }

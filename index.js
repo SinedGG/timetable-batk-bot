@@ -67,7 +67,8 @@ bot.start((ctx) => {
           "DB",
           `Користувача ${ctx.message.chat.id} додано до бази даних!`
         );
-        ctx.telegram.sendMessage(ctx.chat.id, text.start, markdown, {
+        ctx.telegram.sendMessage(ctx.chat.id, text.start,{
+          "parse_mode": "markdown",
           reply_markup: {
             parse_mode: "markdown",
             keyboard: [
@@ -587,7 +588,7 @@ function select_group(ctx){
       logger("DB Error", `Помилка отримання даних з БД`, err);
     }else{
       var keyboard = [];
-      for (let index = 0; index < 10; index++) {
+      for (let index = 0; index < groups.length; index++) {
         keyboard.push([
           {
             text: groups[index].course,
@@ -655,7 +656,6 @@ bot.action(triggerAsyncId, (ctx) => {
     }
   });
 });
-
 
 var set1, set2;
 
