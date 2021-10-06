@@ -67,7 +67,8 @@ bot.start((ctx) => {
           "DB",
           `Користувача ${ctx.message.chat.id} додано до бази даних!`
         );
-        ctx.telegram.sendMessage(ctx.chat.id, text.start, markdown, {
+        ctx.telegram.sendMessage(ctx.chat.id, text.start,{
+          "parse_mode": "markdown",
           reply_markup: {
             parse_mode: "markdown",
             keyboard: [
