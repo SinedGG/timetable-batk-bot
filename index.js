@@ -608,7 +608,7 @@ function select_group(ctx){
   
 }
 
-bot.action(triggerAsyncId, (ctx) => {
+bot.on('callback_query', (ctx) => {
   console.log("trigger")
   db.query(`SELECT course FROM timetable`, function (err, groups) {
     if (err) {
