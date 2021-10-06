@@ -591,7 +591,7 @@ function select_group(ctx){
         keyboard.push([
           {
             text: groups[index].course,
-            callback_data: "К-11М",
+            callback_data: groups[index].course,
           }
         ])
         
