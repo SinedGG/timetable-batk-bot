@@ -37,7 +37,7 @@ function logger(type, text, err) {
   console.log(log_text + "  " + err);
 
   logtofile.write(log_text + "\r\n");
- // bot.telegram.sendMessage(cfg.log_channel, log_text);
+  bot.telegram.sendMessage(cfg.log_channel, log_text);
 }
 
 var markdown = {
@@ -188,7 +188,7 @@ bot.command("updatemsg", (ctx) => {
 });
 
 bot.command("report", (ctx) => {
-  ctx.reply("Для зв'язку з розробником -  @berezovsky23");
+  ctx.reply("Для зв'язку з розробником -  @berezovsky23");
 });
 
 function GetNewFileSize() {
