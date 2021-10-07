@@ -386,7 +386,10 @@ function parcePDF(day) {
       if (err) {
         logger("DB Error", `Помилка оновлення таблиці timetable`, err);
       } else {
-        SeparateTable(day)
+        setTimeout(() => {
+          SeparateTable(day)
+        }, 2500);
+        
       }
     });
   }
@@ -422,7 +425,9 @@ function SeparateTable(current_day) {
                 rowsold[index].classroom4 != rows[0].classroom4 ||
                 rowsold[index].classroom5 != rows[0].classroom5
               ) {
-                sendTimetable(rows[0], current_day);
+                setTimeout(() => {
+                  sendTimetable(rows[0], current_day);
+                }, 2500);
               }
             }
           }
@@ -432,7 +437,7 @@ function SeparateTable(current_day) {
   });
   setTimeout(() => {
     clone_table(current_day);
-  }, 10000);
+  }, 25000);
 }
 
 function sendTimetable(content, current_day) {
