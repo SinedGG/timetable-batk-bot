@@ -149,6 +149,12 @@ bot.command("getlog", (ctx) => {
   }
 });
 
+bot.command("zm", ctx =>{
+  ctx.replyWithDocument(            
+    { source: cfg.pdfpatch },
+    { disable_notification: true, caption: "" })
+})
+
 bot.command("stats", (ctx) => {
   db.query("SELECT chat_id FROM users", function (err, result) {
     var user = result;
