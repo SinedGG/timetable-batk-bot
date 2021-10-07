@@ -3,6 +3,6 @@
     "url":"https://test.sined.keenetic.pro/zm.pdf", 
     "pdfpatch":"./file/zm.pdf",
     "adminchatid":[1545347454, 460266962],
-    "check_timeout":"10000",
+    "check_timeout":"60000",
     "version":"0.7.2 beta"
 }
