@@ -10,7 +10,7 @@ const { triggerAsyncId } = require("async_hooks");
 const { consumers } = require("stream");
 
 
-const db = mysql.createPool({
+const db = mysql.createConnection({
   connectionLimit: 10,
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
