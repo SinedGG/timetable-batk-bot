@@ -857,7 +857,7 @@ function main(){
   GetNewFileSize();
   setTimeout(() => {
     main()
-  }, 5000);
+  }, 45000);
 }
 
 bot.launch();
