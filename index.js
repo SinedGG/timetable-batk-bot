@@ -10,8 +10,7 @@ const { triggerAsyncId } = require("async_hooks");
 const { consumers } = require("stream");
 
 
-const db = mysql.createPool({
-  connectionLimit: 10,
+const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   database: process.env.DB_NAME,
@@ -386,10 +385,7 @@ function parcePDF(day) {
       if (err) {
         logger("DB Error", `Помилка оновлення таблиці timetable`, err);
       } else {
-        setTimeout(() => {
-          SeparateTable(day)
-        }, 2500);
-        
+        SeparateTable(day)
       }
     });
   }
@@ -425,9 +421,7 @@ function SeparateTable(current_day) {
                 rowsold[index].classroom4 != rows[0].classroom4 ||
                 rowsold[index].classroom5 != rows[0].classroom5
               ) {
-                setTimeout(() => {
-                  sendTimetable(rows[0], current_day);
-                }, 2500);
+                sendTimetable(rows[0], current_day);
               }
             }
           }
@@ -437,7 +431,7 @@ function SeparateTable(current_day) {
   });
   setTimeout(() => {
     clone_table(current_day);
-  }, 25000);
+  }, 10000);
 }
 
 function sendTimetable(content, current_day) {
@@ -862,7 +856,7 @@ function main(){
   GetNewFileSize();
   setTimeout(() => {
     main()
-  }, 5000);
+  }, cfg.check_timeout);
 }
 
 bot.launch();
