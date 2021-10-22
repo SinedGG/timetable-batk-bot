@@ -36,7 +36,7 @@ function logger(type, text, err) {
   console.log(log_text + "  " + err);
 
   logtofile.write(log_text + "\r\n");
-  bot.telegram.sendMessage(cfg.log_channel, log_text);
+  //bot.telegram.sendMessage(cfg.log_channel, log_text);
 }
 
 var markdown = {
@@ -59,14 +59,14 @@ bot.start((ctx) => {
             "User",
             `Користувач ${ctx.message.chat.id} вже є у базі даних`
           );
-          ctx.reply(text.user_already_exist);
+          ctx.reply("Хм... Здається ви вже є у базі даних. \nЯкщо ви вважаєте що сталась помилка @berezovsky23");
         }
       } else {
         logger(
           "DB",
           `Користувача ${ctx.message.chat.id} додано до бази даних!`
         );
-        ctx.telegram.sendMessage(ctx.chat.id, text.start,{
+        ctx.telegram.sendMessage(ctx.chat.id, "* Виберіть опцію для надсилання розкладу: * \n \n *👨‍🎓 Вибір групи* - отримувати розклад конкретної групи у текстовому форматі. \n *📅 Отримувати розклад-таблицю* - отримувати розклад у форматі таблиці (_як на сайті_)",{
           "parse_mode": "markdown",
           reply_markup: {
             parse_mode: "markdown",
@@ -582,7 +582,7 @@ bot
           );
         } else {
           logger("Group", `Встановлено розклад-таблицю для користувача ${ctx.chat.id}`, err);
-          ctx.telegram.sendMessage(ctx.chat.id, text.table_timetable_confirm, {
+          ctx.telegram.sendMessage(ctx.chat.id, "Тепер ви будете отримувати розклад-таблицю 📅", {
             reply_markup: { remove_keyboard: true },
           });
         }
@@ -792,7 +792,7 @@ bot.hears("🔔 Сповіщення", (ctx) => {
           set2 = "❌";
         }
         
-        ctx.telegram.sendMessage(ctx.chat.id, text.notification_setting, {
+        ctx.telegram.sendMessage(ctx.chat.id, "⚙️*Налаштування сповіщень*", {
           parse_mode: "markdown",
           reply_markup:{
             remove_keyboard: true,
@@ -800,7 +800,7 @@ bot.hears("🔔 Сповіщення", (ctx) => {
         }).then(({message_id})=>{
           ctx.telegram.deleteMessage(ctx.chat.id, message_id)
         }).then(
-          ctx.telegram.sendMessage(ctx.chat.id, text.notification_setting, {
+          ctx.telegram.sendMessage(ctx.chat.id, "⚙️*Налаштування сповіщень*", {
             parse_mode: "markdown",
             reply_markup:{
               inline_keyboard: [
@@ -825,12 +825,8 @@ bot.hears("🔔 Сповіщення", (ctx) => {
   );
 });
 
-bot.action("NN", (ctx) => {
-  
-});
-
 function EditInline(ctx, set1, set2) {
-  ctx.editMessageText(text.notification_setting, {
+   ctx.editMessageText("⚙️*Налаштування сповіщень*", {
     parse_mode: "markdown",
     reply_markup: {
       inline_keyboard: [
@@ -840,10 +836,6 @@ function EditInline(ctx, set1, set2) {
     },
   });
 }
-
-bot.action("NZ", (ctx) => {
-  
-});
 
 var j = schedule.scheduleJob("9 9 9 * * *", function () {
   db.query("UPDATE properties SET value=0 WHERE id=3");
