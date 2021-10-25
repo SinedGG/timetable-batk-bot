@@ -1,13 +1,10 @@
 const { Telegraf } = require("telegraf");
 require("dotenv").config();
 const bot = new Telegraf(process.env.TG_TOKEN);
-const http = require("http");
 const fs = require("fs");
 var mysql = require("mysql");
 var schedule = require("node-schedule");
 var request = require("request");
-const { triggerAsyncId } = require("async_hooks");
-const { consumers } = require("stream");
 
 
 const db = mysql.createConnection({
@@ -123,6 +120,10 @@ bot.command("stop", (ctx) => {
 
 bot.command("getid", (ctx) => {
   ctx.reply(ctx.message.chat.id);
+  logger(
+    "Getid",
+    `Користувач ${ctx.message.chat.username} ID - ${ctx.message.chat.id}`
+  );
 });
 
 bot.command("help", (ctx) => {
