@@ -7,8 +7,7 @@ var schedule = require("node-schedule");
 var request = require("request");
 
 
-const db = mysql.createPool({
-  connectionLimit: 10,
+const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   database: process.env.DB_NAME,
