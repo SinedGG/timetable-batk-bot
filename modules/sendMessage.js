@@ -37,7 +37,7 @@ async function r(bot, db, content, days) {
               } else {
                 text = `${text} на ${days}`;
               }
-              console.log(`[Send] Спроба надсилання розкладу для ${users[i].chat_id}`)
+              console.log(`[Send] Спроба надсилання розкладу для - ${users[i].chat_id}, група - ${content.course}`)
               bot.telegram
                 .sendDocument(
                   users[i].chat_id,
@@ -62,7 +62,7 @@ async function r(bot, db, content, days) {
               i++;
               setTimeout(() => {
                 loop(i);
-              }, 250);
+              }, 100);
             }else{
               setTimeout(() => {
                 resolve();
