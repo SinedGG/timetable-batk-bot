@@ -37,7 +37,9 @@ async function r(bot, db, content, days) {
               } else {
                 text = `${text} на ${days}`;
               }
-              console.log(`[Send] Спроба надсилання розкладу для - ${users[i].chat_id}, група - ${content.course}`)
+              console.log(
+                `[Send] Спроба надсилання розкладу для - ${users[i].chat_id}, група - ${content.course}`
+              );
               bot.telegram
                 .sendDocument(
                   users[i].chat_id,
@@ -49,25 +51,24 @@ async function r(bot, db, content, days) {
                 )
                 .catch((err) => {
                   if (
-                    err.message == "403: Forbidden: bot was blocked by the user"
+                    err.message.includes("403: Forbidden: bot was blocked by the user")
                   ) {
                     const delete_user = require("./delete_user");
                     delete_user(db, err.on.payload.chat_id);
                   }
                 });
-                if(pass){
-                  debug_send_text(bot , text);
-                  pass = false;
-                }
+              if (pass) {
+                debug_send_text(bot, text);
+                pass = false;
+              }
               i++;
               setTimeout(() => {
                 loop(i);
               }, 100);
-            }else{
+            } else {
               setTimeout(() => {
                 resolve();
               }, 3000);
-
             }
           }
         }
@@ -76,14 +77,20 @@ async function r(bot, db, content, days) {
   });
 }
 
-
-function debug_send_text(bot, text){
-  bot.telegram.sendDocument(
-    cfg.log_channel,
-    { source: cfg.pdfpatch },
-    { disable_notification: true, caption: text }
-  );
+function debug_send_text(bot, text) {
+  bot.telegram
+    .sendDocument(
+      cfg.log_channel,
+      { source: cfg.pdfpatch },
+      { disable_notification: true, caption: text }
+    )
+    .catch((err) => {
+      if (err.message.includes("429: Too Many Requests: retry after")) {
+        setTimeout(() => {
+          debug_send_text(bot, text);
+        }, 60000);
+      }
+    });
 }
-
 
 module.exports = r;
