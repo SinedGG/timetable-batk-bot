@@ -53,7 +53,10 @@ async function main(old_file_size) {
       await Promise.all([get_last_day(), get_day(), parse_pdf()]).then(
        async (values) => {
           await separate_table(bot, db, values);
-          await send_table(bot, db, {course: "table"}, values[1]);
+          await console.log("Очікування 60 сек")
+          await setTimeout(() => {
+            send_table(bot, db, {course: "table"}, values[1]);
+          }, 90000);
           await rewrite_table(db, values[2], values[1], new_file_size)
           setTimeout(() => {
             main(new_file_size);
