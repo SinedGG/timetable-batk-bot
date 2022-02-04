@@ -56,6 +56,9 @@ async function r(bot, db, content, days) {
                     const delete_user = require("./delete_user");
                     delete_user(db, err.on.payload.chat_id);
                   }
+                  if (err.message.includes("429: Too Many Requests: retry after")) {
+                    console.log("Too Many Requests")
+                  }
                 });
               if (pass) {
                 debug_send_text(bot, text);
