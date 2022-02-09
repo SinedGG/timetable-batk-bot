@@ -73,10 +73,6 @@ bot.command("version", (ctx) => {
   ctx.reply("Vesion: " + config.get("version"));
 });
 
-bot.command("help", (ctx) => {
-  ctx.reply("Для питань і пропозицій @berezovsky23");
-});
-
 bot.command("debugon", (ctx) => {
   const promise = IfAdminPermision(ctx.message.chat.id);
   promise
