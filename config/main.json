@@ -1,6 +1,6 @@
 {
     "log_channel": "-1001527966070",
-    "url":"https://www.batk.nubip.edu.ua/images/zm.pdf", 
+    "url":"http://localhost/pdf/zm.pdf", 
     "pdfpatch":"./file/zm.pdf",
     "adminchatid":[1545347454, 460266962],
     "check_timeout":"5000",

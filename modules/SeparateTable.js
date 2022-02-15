@@ -12,7 +12,7 @@ async function r(bot, db, value) {
               new Error(`[DB Error] Помилка отримання даних з бази даних!`, err)
             );
           } else {
-            if (rows.length) {
+            if (rows[0]) {
               if (
                 timetable_new[index].lesson1 != rows[0].lesson1 ||
                 timetable_new[index].lesson2 != rows[0].lesson2 ||
@@ -26,8 +26,28 @@ async function r(bot, db, value) {
                 timetable_new[index].classroom5 != rows[0].classroom5
               ) {
                 send_messgae(bot, db, timetable_new[index], value);
+                console.log(
+                  `--------------------------------------------------`
+                );
+                console.log(`Гурпа ${timetable_new[index].course}`);
+                console.log(
+                  `${timetable_new[index].lesson1}[${timetable_new[index].classroom1}] | ${rows[0].lesson1} [${rows[0].classroom1}]`
+                );
+                console.log(
+                  `${timetable_new[index].lesson2}[${timetable_new[index].classroom2}] | ${rows[0].lesson2} [${rows[0].classroom2}]`
+                );
+                console.log(
+                  `${timetable_new[index].lesson3}[${timetable_new[index].classroom3}] | ${rows[0].lesson3} [${rows[0].classroom3}]`
+                );
+                console.log(
+                  `${timetable_new[index].lesson4}[${timetable_new[index].classroom4}] | ${rows[0].lesson4} [${rows[0].classroom4}]`
+                );
+                console.log(
+                  `--------------------------------------------------`
+                );
               }
             } else {
+              console.log("New group");
               send_messgae(bot, db, timetable_new[index], value);
             }
           }
