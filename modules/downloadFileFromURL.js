@@ -8,13 +8,11 @@ async function r() {
   return new Promise((resolve, reject) => {
     progress(request(cfg.url), {})
       .on("error", (err) => {
-        reject(new Error(`[Download ERROR] Помилка завантаження файлу`, err));
+        reject(new Error(`[Download ERROR] Помилка завантаження файлу`, err))
       })
       .on("end", () => {
-        setTimeout(() => {
-          console.log(`[Download] Файл заавантажено успішно`);
-          resolve();
-        }, 1500);
+        console.log(`[Download] Файл заавантажено успішно`);
+        resolve();
       })
       .pipe(fs.createWriteStream(cfg.pdfpatch));
   });
