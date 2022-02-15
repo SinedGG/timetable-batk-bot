@@ -11,8 +11,10 @@ async function r() {
         reject(new Error(`[Download ERROR] Помилка завантаження файлу`, err))
       })
       .on("end", () => {
-        console.log(`[Download] Файл заавантажено успішно`);
-        resolve();
+        setTimeout(() => {
+          console.log(`[Download] Файл заавантажено успішно`);
+          resolve();
+        }, 1500);
       })
       .pipe(fs.createWriteStream(cfg.pdfpatch));
   });
