@@ -25,7 +25,6 @@ async function r(db) {
       }
       if (day == undefined) {
         console.log(`[Parce day] не вдалось визначити день в таблиці`);
-        resolve("");
       } else {
         console.log(`[Get day] Отримання дня тижня успішне.`)
         resolve(day);
