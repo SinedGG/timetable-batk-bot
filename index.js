@@ -50,7 +50,7 @@ async function main(old_file_size) {
     if (old_file_size != new_file_size) {
       console.log(`[File size] Old size - ${old_file_size} : New size ${new_file_size}`)
       await download_file();
-      await Promise.all([get_last_day(), get_day(), parse_pdf()]).then(
+      await Promise.all([get_last_day(db), get_day(), parse_pdf()]).then(
        async (values) => {
           await separate_table(bot, db, values);
           await console.log("Очікування 60 сек")
