@@ -15,7 +15,7 @@ const cfg = JSON.parse(fs.readFileSync("./config/main.json", "utf8"));
 
 const get_file_size = require("./modules/fileSizreByURL");
 const download_file = require("./modules/downloadFileFromURL");
-const get_last_day = require("./modules/GetTimetableDay");
+const get_last_day = require("./modules/GetLastDay");
 const get_day = require("./modules/GetTimetableDay");
 const parse_pdf = require("./modules/parcePDF");
 const separate_table = require("./modules/SeparateTable");
