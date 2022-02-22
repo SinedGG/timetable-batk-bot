@@ -46,9 +46,6 @@ async function r(bot, db, value) {
                   `--------------------------------------------------`
                 );
               }
-            } else {
-              console.log("New group");
-              send_messgae(bot, db, timetable_new[index], value);
             }
           }
         }
