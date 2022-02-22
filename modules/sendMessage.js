@@ -21,7 +21,7 @@ async function r(bot, db, content, days) {
             if (i < users.length) {
               var text;
               var disable_notification = true;
-              if (days[0] == days[1]) {
+              if (days[0] != days[1]) {
                 text = "Новий розклад📚";
                 if (users[i].notification_n) {
                   disable_notification = false;
