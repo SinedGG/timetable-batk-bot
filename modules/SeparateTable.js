@@ -12,6 +12,7 @@ async function r(bot, db, value) {
               new Error(`[DB Error] Помилка отримання даних з бази даних!`, err)
             );
           } else {
+            console.log('rows = ', rows[0])
             if (rows[0]) {
               if (
                 timetable_new[index].lesson1 != rows[0].lesson1 ||
