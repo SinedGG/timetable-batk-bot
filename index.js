@@ -19,13 +19,13 @@ const get_last_day = require("./modules/GetLastDay");
 const get_day = require("./modules/GetTimetableDay");
 const parse_pdf = require("./modules/parcePDF");
 const separate_table = require("./modules/SeparateTable");
-const rewrite_table = require("./modules/RewriteTable")
-const send_table = require("./modules/sendMessage")
+const rewrite_table = require("./modules/RewriteTable");
+const send_table = require("./modules/sendMessage");
 
 init();
 
 function init() {
-  console.log(`[Initialization] Ініціалізація.`)
+  console.log(`[Initialization] Ініціалізація.`);
   db.query(
     `SELECT value FROM properties WHERE type='OldFileSize' `,
     (err, rows) => {
@@ -48,25 +48,27 @@ async function main(old_file_size) {
   try {
     var new_file_size = await get_file_size();
     if (old_file_size != new_file_size) {
-      console.log(`[File size] Old size - ${old_file_size} : New size ${new_file_size}`)
+      console.log(
+        `[File size] Old size - ${old_file_size} : New size ${new_file_size}`
+      );
       await download_file();
       await Promise.all([get_last_day(db), get_day(), parse_pdf()]).then(
-       async (values) => {
+        async (values) => {
           await separate_table(bot, db, values);
-          
-          await console.log("Очікування 60 сек")
+
+          await console.log("Очікування 60 сек");
           await setTimeout(() => {
-            send_table(bot, db, {course: "table"}, values[1]);
-          }, 90000);
-          
-          await setTimeout(() => {
-            rewrite_table(db, values[2], values[1], new_file_size)
-          }, 10000);
+            send_table(bot, db, { course: "table" }, values[1]);
+
+            setTimeout(() => {
+              rewrite_table(db, values[2], values[1], new_file_size);
+            }, 15000);
+          }, 60000);
 
           await setTimeout(() => {
-            console.log("Continue")
+            console.log("Continue");
             main(new_file_size);
-          }, 60000);
+          }, 90000);
         }
       );
     } else {
@@ -87,6 +89,5 @@ keyboard(bot, db);
 
 const commands = require("./commands/index");
 commands(bot, db);
-
 
 bot.launch();
