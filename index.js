@@ -62,7 +62,7 @@ async function main(old_file_size) {
           await rewrite_table(db, values[2], values[1], new_file_size)
           setTimeout(() => {
             main(new_file_size);
-          }, 25000);
+          }, 60000);
         }
       );
     } else {
