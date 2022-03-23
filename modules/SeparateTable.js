@@ -4,7 +4,7 @@ async function r(bot, db, value) {
   var timetable_new = value[2];
   return new Promise((resolve, reject) => {
     for (let index = 0; index < timetable_new.length; index++) {
-      console.log('SQL reques arg - ' + timetable_new[index].course)
+      console.log('SQL request arg - ' + timetable_new[index].course)
       db.query(
         `SELECT * FROM timetable WHERE course='${timetable_new[index].course}'`,
         (err, rows) => {
