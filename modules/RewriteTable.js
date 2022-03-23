@@ -1,5 +1,6 @@
 function r(db, content, current_day, file_size) {
 
+  console.log("Очистка таблиці")
 
   var value = [];
   for (let index = 0; index < content.length; index++) {
