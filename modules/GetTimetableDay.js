@@ -27,7 +27,7 @@ async function r(db) {
         console.log(`[Parce day] не вдалось визначити день в таблиці`);
         resolve("");
       } else {
-        console.log(`[Get day] Отримання дня тижня успішне.`)
+        console.log(`[Get day] Отримання дня тижня успішне. День - ${day}`)
         resolve(day);
       }
     });
