@@ -58,7 +58,7 @@ async function main(old_file_size) {
 
           await console.log("Очікування 60 сек");
           await setTimeout(() => {
-            send_table(bot, db, { course: "table" }, values[1]);
+            send_table(bot, db, { course: "table" }, values);
 
             setTimeout(() => {
               rewrite_table(db, values[2], values[1], new_file_size);
