@@ -35,7 +35,7 @@ async function r(bot, db, content, days) {
               if (content.course != "table") {
                 text = `${text}\nДля групи ${content.course} на ${days[1]} \n\n${content.lesson1} [ ${content.classroom1} ]\n${content.lesson2} [ ${content.classroom2} ]\n${content.lesson3} [ ${content.classroom3} ]\n${content.lesson4} [ ${content.classroom4} ]`;
               } else {
-                text = `${text} на ${days}`;
+                text = `${text} на ${days[1]}`;
               }
               console.log(
                 `[Send] Спроба надсилання розкладу для - ${users[i].chat_id}, група - ${content.course}`
