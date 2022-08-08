@@ -31,7 +31,7 @@ bot.start(async (ctx) => {
 bot.command("stop", async (ctx) => {
   var user = ctx.message.chat.id;
   try {
-    await db.query(`DELETE FROM users WHERE ChatId = ${user} `);
+    await db.query(`DELETE FROM users WHERE chat_id = ${user} `);
     console.log(`Користувача ${user} видадено з бази даних.`);
     ctx.reply("👌");
   } catch (err) {
