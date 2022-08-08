@@ -1,262 +1,140 @@
-const { Telegraf } = require("telegraf");
-const config = require("config");
 require("dotenv").config();
-const bot = new Telegraf(process.env.TG_TOKEN);
-const http = require("http");
-const fs = require("fs");
-var mysql = require("mysql");
-var schedule = require("node-schedule");
+const { Telegraf } = require("telegraf"),
+  bot = new Telegraf(process.env.TG_TOKEN),
+  http = require("http"),
+  fs = require("fs"),
+  request = require("request"),
+  mysql = require("mysql2/promise"),
+  cfg = require("./config.js"),
+  schedule = require("node-schedule");
 
-
-bot.start((ctx) => {
-  pool.query(
-    "INSERT users (ChatId) values (" + ctx.message.chat.id + ")",
-    function (err) {
-      if (err) {
-        ctx.reply("No");
-      } else {
-        console.log(
-          "Користувача - " + ctx.message.chat.id + " додано до списку"
-        );
-        ctx.reply(
-          "Чудово! Тепер ви будете отримувати свіжий розклад одразу після його публікації⚡️"
-        );
-      }
-    }
-  );
-});
-
-
-const pool = mysql.createPool({
-  connectionLimit: 10,
+const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
-  database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
-
-
-var debugging;
-
-function IfAdminPermision(id) {
-  var admin_id = config.get("adminchatid");
-  return new Promise((resolve, reject) => {
-    for (let index = 0; index < admin_id.length; index++) {
-      if (id == admin_id[index]) {
-        resolve();
-      }
-      if(index+1 == admin_id.length){
-        reject();
-      }
-    }
-  })
-}
-
-bot.command("stop", (ctx) => {
-  pool.query(
-    "DELETE FROM users WHERE ChatId =" + ctx.message.chat.id,
-    function (err) {
-      console.log(
-        "Користувача - " + ctx.message.chat.id + "видалено зі списку"
-      );
-    }
-  );
-  ctx.reply("👌");
+bot.start(async (ctx) => {
+  var user = ctx.message.chat.id;
+  try {
+    await db.query(`INSERT users (chat_id) values (${user})`);
+    console.log(`Користувача - ${user} додано до бази даних.`);
+    ctx.reply(
+      "Чудово! Тепер ви будете отримувати свіжий розклад одразу після його публікації⚡️"
+    );
+  } catch (err) {
+    ctx.reply("Здається ви вже є у базі даних.");
+  }
 });
 
-bot.command("getid", (ctx) => {
+bot.command("stop", async (ctx) => {
+  var user = ctx.message.chat.id;
+  try {
+    await db.query(`DELETE FROM users WHERE ChatId = ${user} `);
+    console.log(`Користувача ${user} видадено з бази даних.`);
+    ctx.reply("👌");
+  } catch (err) {
+    ctx.reply(`Упс... Сталась помилка.`);
+  }
+});
+
+bot.command("id", (ctx) => {
   ctx.reply(ctx.message.chat.id);
 });
 
-bot.command("version", (ctx) => {
-  ctx.reply("Vesion: " + config.get("version"));
+bot.command("stats", async (ctx) => {
+  try {
+    var [rows] = await db.query("SELECT chat_id FROM users");
+    var users_count = rows.length;
+    var days = Math.ceil(
+      (new Date().getTime() - new Date(cfg.start_date).getTime()) /
+        1000 /
+        60 /
+        60 /
+        24
+    );
+    ctx.reply(
+      `Працює безперервно - ${days}  📈\nКористувачів підписано - ${users_count} 👨‍🎓`
+    );
+  } catch (err) {}
 });
 
-bot.command("debugon", (ctx) => {
-  const promise = IfAdminPermision(ctx.message.chat.id);
-  promise
-  .then(
-    result => {
-      ctx.reply("Режим відладки ввімкнено!🔧");
-    debugging = 1;
-    console.log("Режим відладки ввімкнено!");
-    },
-    error => {
-      ctx.reply("У вас немає доступу до команди!");
-    }
-  );
-});
-
-bot.command("debugoff", (ctx) => {
-  const promise = IfAdminPermision(ctx.message.chat.id);
-  promise
-  .then(
-    result => {
-      ctx.reply("Режим відладки вимкнено!🔧");
-    debugging = 1;
-    console.log("Режим відладки вимкнено!");
-    },
-    error => {
-      ctx.reply("У вас немає доступу до команди!");
-    }
-  );
-});
-
-bot.command("stats", (ctx) => {
-  pool.query("SELECT ChatId FROM users", function (err, result) {
-    var user = result
-    pool.query("SELECT value FROM properties WHERE id=4", function (err, result) {
-      ctx.reply("Працює безперервно - "+ result[0].value + "  📈" + "\n" + "Користувачів підписано - "+ user.length + " 👨‍🎓");
-    });
-  
-  });
-});
-
-if ((debugging = 1)) {
-  console.log("Запуск успішний");
-}
-
-function download() {
-  const file = fs.createWriteStream(config.get("pdfpatch"));
-  const request = http.get(config.get("url"), function (response) {
-    response.pipe(file);
-  });
-}
-
-function download1 (){
-  var request = require('request');
-  var progress = require('request-progress');
-  progress(request(config.get("url")), {
- })
- .on('error', function (err) {
-    bot.telegram.sendMessage(460266962, "Download error");
- })
- .on('end', function () {
-     console.log("finish function");
-     setTimeout(sendTimetable, 10000);
- })
- .pipe(fs.createWriteStream(config.get("pdfpatch")));   
- }
-
-function getChatID() {
-  pool.query("SELECT ChatId FROM users", function (err, result) {
-    global.data = result;
-  });
-}
-
-function sendTimetable() {
-  var number = data.length;
-  if (TimetableSendToday == 1) {
-    for (let i = 0; i < number; i++) {
- 
-      bot.telegram.sendDocument(
-        data[i].ChatId,
-        { source: "./file/zm.pdf" },
-        {disable_notification: true,
-         caption: "Зміни в розкладі📚" }
-      );
-      pool.query("UPDATE properties SET value=1 WHERE id=3");
-      if ((debugging = 1)) {
-        console.log("Розклад надіслано" + data[i].ChatId);
-      }
-    }
-  } else {
-    for (let i = 0; i < number; i++) {
-      bot.telegram.sendDocument(
-        data[i].ChatId,
-        { source: "./file/zm.pdf" },
-        { caption: "Новий розклад📚" }
-      );
-      pool.query("UPDATE properties SET value=1 WHERE id=3");
-      if ((debugging = 1)) {
-        console.log("Розклад надіслано");
-      }
-    }
+init();
+async function init() {
+  try {
+    var [rows] = await db.query(
+      `SELECT value FROM properties WHERE type='OldFileSize'`
+    );
+    main(rows[0].value);
+  } catch (err) {
+    console.log(`[DB Error] Помилка отримаання розміру файла з бази даних!`);
+    setTimeout(() => {
+      init();
+    }, 120 * 1000);
   }
 }
 
-function CheckIFfileSize() {
-  if ((debugging = 1)) {
-    console.log("--------------------------------------");
-    console.log("Старт");
-  }
-  var request1 = require("request");
-  request1(
-    {
-      url: config.get("url"),
-      method: "HEAD",
-    },
-    function (err, response, body) {
-      var NewFileSizeReplace = response.headers["content-length"];
-      pool.query(
-        "UPDATE properties SET value = " + NewFileSizeReplace + " WHERE id=2"
+const get_size = require("./modules/file_size_by_url.js");
+const download_file = require("./modules/download_file.js");
+
+async function main(old_size) {
+  try {
+    var new_size = await get_size();
+    if (new_size != old_size) {
+      await download_file();
+      var [users] = await db.query(`SELECT chat_id FROM users`);
+      var [TimetableSendToday] = await db.query(
+        `SELECT value FROM properties WHERE id=3`
       );
-      if ((debugging = 1)) {
+      var caption = "Новий розклад📚";
+      if (TimetableSendToday[0].value) caption = "Зміни в розкладі📚";
+      for (let i = 0; i < users.length; i++) {
+        console.log(`Спроба надсилання розкладу для - ${users[i].chat_id}`);
+        bot.telegram
+          .sendDocument(
+            users[i].chat_id,
+            {
+              source: cfg.pdfpatch,
+            },
+            { caption: caption }
+          )
+          .catch((err) => {
+            if (
+              err.message.includes(
+                "403: Forbidden: bot was blocked by the user"
+              )
+            ) {
+              db.query(`DELETE FROM users WHERE chat_id =${users[i].chat_id}`);
+              console.log(
+                `[DB] Користувача ${users[i].chat_id} видалено з бази даних у зв'язку з блокуванням.`
+              );
+            }
+            if (err.message.includes("429: Too Many Requests: retry after")) {
+              console.log("Too Many Requests");
+            }
+          });
       }
+
+      old_size = new_size;
+
+      db.query(`
+        UPDATE properties SET value = ${new_size} WHERE id=1`);
+      db.query(`UPDATE properties SET value=1 WHERE id=3`);
     }
-  );
+    setTimeout(() => {
+      main(old_size);
+    }, 30 * 1000);
+  } catch (err) {
+    console.log(err.message);
+    setTimeout(() => {
+      main(old_size);
+    }, 60 * 1000);
+  }
 }
 
-var j = schedule.scheduleJob("9 9 9 * * *", function () {
-  pool.query("UPDATE properties SET value=0 WHERE id=3");
-  pool.query("UPDATE properties SET value = value + 1 WHERE id  = 4");
+schedule.scheduleJob("9 9 9 * * *", () => {
+  db.query("UPDATE properties SET value=0 WHERE id=3");
 });
-
-function IfFileSize() {
-  if ((debugging = 1)) {
-    console.log("Новий розмір " + NewFileSize);
-    console.log("Старий розмір " + OldFileSize);
-   console.log("Чи розклад був надісланий " + TimetableSendToday);
-  }
-
-  if (NewFileSize == undefined) {
-  } else if (OldFileSize == undefined) {
-  } else {
-    if (NewFileSize != OldFileSize) {
-      download1();
-      if ((debugging = 1)) {
-        console.log("Завантаження файла");
-      }
-
-      pool.query(
-        "UPDATE properties SET value = " + NewFileSize + " WHERE id=1"
-      );
-    }
-  }
-}
-
-function CheckNewFileSize(i) {
-  setTimeout(() => {
-    pool.query("SELECT value FROM properties WHERE id=2 LIMIT 1", function (
-      err,
-      rows
-    ) {
-      global.NewFileSize = rows[0].value;
-    });
-
-    pool.query("SELECT value FROM properties WHERE id=1 LIMIT 1", function (
-      err,
-      rows
-    ) {
-      global.OldFileSize = rows[0].value;
-    });
-
-    pool.query("SELECT value FROM properties WHERE id=3 LIMIT 1", function (
-      err,
-      rows
-    ) {
-      global.TimetableSendToday = rows[0].value;
-    });
-
-    setTimeout(CheckIFfileSize, 3000);
-    setTimeout(getChatID, 8000);
-    setTimeout(IfFileSize, 10000);
-
-    CheckNewFileSize(++i);
-  }, 60000);
-}
-
-CheckNewFileSize(0);
 
 bot.launch();
