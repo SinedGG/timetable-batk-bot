@@ -1,24 +1,15 @@
-function r(bot, db) {
+function main(bot, db) {
   bot.command("stop", (ctx) => {
-    db.query(
-      `DELETE FROM users WHERE chat_id =${ctx.message.chat.id}`,
-      function (err) {
-        if (err) {
-          logger(
-            "DB Error",
-            `Помилка видалення користувача ${ctx.message.chat.id} з бази даних!`,
-            err
-          );
-        } else {
-          logger(
-            "DB",
-            `Користувача ${ctx.message.chat.id} видалено з бази даних!`
-          );
-          ctx.reply("👌");
-        }
-      }
+    db.query(`DELETE FROM users WHERE chat_id =${ctx.message.chat.id}`);
+    console.log(
+      `[Command] Користувача ${ctx.message.chat.username} (${ctx.message.chat.id}) видалено з бази даних.`
     );
+    bot.telegram
+      .sendMessage(ctx.message.chat.id, "👌", {
+        reply_markup: { remove_keyboard: true },
+      })
+      .catch((err) => {});
   });
 }
 
-module.exports = r;
+module.exports = main;

@@ -1,62 +1,34 @@
 const send_messgae = require("./sendMessage");
+const get_day = require("./GetTimetableDay.js");
 
-async function r(bot, db, value) {
-  var timetable_new = value[2];
-  return new Promise((resolve, reject) => {
-    for (let index = 0; index < timetable_new.length; index++) {
-      console.log('SQL request arg - ' + timetable_new[index].course)
-      db.query(
-        `SELECT * FROM timetable WHERE course='${timetable_new[index].course}'`,
-        (err, rows) => {
-          if (err) {
-            reject(
-              new Error(`[DB Error] Помилка отримання даних з бази даних!`, err)
-            );
-          } else {
-            console.log('rows = ', rows[0])
-            if (rows[0]) {
-              if (
-                timetable_new[index].lesson1 != rows[0].lesson1 ||
-                timetable_new[index].lesson2 != rows[0].lesson2 ||
-                timetable_new[index].lesson3 != rows[0].lesson3 ||
-                timetable_new[index].lesson4 != rows[0].lesson4 ||
-                timetable_new[index].lesson5 != rows[0].lesson5 ||
-                timetable_new[index].classroom1 != rows[0].classroom1 ||
-                timetable_new[index].classroom2 != rows[0].classroom2 ||
-                timetable_new[index].classroom3 != rows[0].classroom3 ||
-                timetable_new[index].classroom4 != rows[0].classroom4 ||
-                timetable_new[index].classroom5 != rows[0].classroom5
-              ) {
-                send_messgae(bot, db, timetable_new[index], value);
-                console.log(
-                  `--------------------------------------------------`
-                );
-                console.log(`Гурпа ${timetable_new[index].course}`);
-                console.log(
-                  `${timetable_new[index].lesson1}[${timetable_new[index].classroom1}] | ${rows[0].lesson1} [${rows[0].classroom1}]`
-                );
-                console.log(
-                  `${timetable_new[index].lesson2}[${timetable_new[index].classroom2}] | ${rows[0].lesson2} [${rows[0].classroom2}]`
-                );
-                console.log(
-                  `${timetable_new[index].lesson3}[${timetable_new[index].classroom3}] | ${rows[0].lesson3} [${rows[0].classroom3}]`
-                );
-                console.log(
-                  `${timetable_new[index].lesson4}[${timetable_new[index].classroom4}] | ${rows[0].lesson4} [${rows[0].classroom4}]`
-                );
-                console.log(
-                  `--------------------------------------------------`
-                );
-              }
-            }
-          }
-        }
+function main(bot, db, day) {
+  return new Promise(async (resolve, reject) => {
+    var [t_new] = await db.query(`select * from timetable`);
+    for (var i = 0; i < t_new.length; i++) {
+      var [t_old] = await db.query(
+        `SELECT * FROM timetable_old WHERE course='${t_new[i].course}'`
       );
+      if (t_old[0]) {
+        if (
+          t_new[i].lesson1 != t_old[0].lesson1 ||
+          t_new[i].lesson2 != t_old[0].lesson2 ||
+          t_new[i].lesson3 != t_old[0].lesson3 ||
+          t_new[i].lesson4 != t_old[0].lesson4 ||
+          t_new[i].lesson5 != t_old[0].lesson5 ||
+          t_new[i].classroom1 != t_old[0].classroom1 ||
+          t_new[i].classroom2 != t_old[0].classroom2 ||
+          t_new[i].classroom3 != t_old[0].classroom3 ||
+          t_new[i].classroom4 != t_old[0].classroom4 ||
+          t_new[i].classroom5 != t_old[0].classroom5
+        ) {
+          await send_messgae(bot, db, t_new[i], day);
+          console.log("yep");
+        }
+      }
     }
-    setTimeout(() => {
-      resolve();
-    }, 10000);
+    await send_messgae(bot, db, { course: "table" }, day);
+    resolve();
   });
 }
 
-module.exports = r;
+module.exports = main;

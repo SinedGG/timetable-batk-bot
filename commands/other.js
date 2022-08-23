@@ -1,25 +1,17 @@
-function r(bot, db) {
-  bot.command("getid", (ctx) => {
-    ctx.reply(ctx.message.chat.id);
-  });
-
-  bot.command("help", (ctx) => {
-    ctx.reply("Для питань і пропозицій @berezovsky23");
-  });
-
-  bot.command("version", (ctx) => {
-    ctx.reply("Vesion: " + cfg.version);
-  });
-  bot.command("zm", (ctx) => {
-    ctx.replyWithDocument(
-      { source: cfg.pdfpatch },
-      { disable_notification: true, caption: "" }
+function main(bot, db) {
+  bot.command("id", (ctx) => {
+    ctx.reply(`Ваш id - ${ctx.message.chat.id}`).catch((err) => {});
+    console.log(
+      `[Command] Користувач ${ctx.message.chat.username} (${ctx.message.chat.id}) використав команду /id`
     );
   });
 
-  bot.command("report", (ctx) => {
-    ctx.reply("Для зв'язку з розробником -  @berezovsky23");
+  bot.command("help", (ctx) => {
+    ctx.reply("Для питань і пропозицій @berezovsky23").catch((err) => {});
+    console.log(
+      `[Command] Користувач ${ctx.message.chat.username} (${ctx.message.chat.id}) використав команду /help`
+    );
   });
 }
 
-module.exports = r;
+module.exports = main;

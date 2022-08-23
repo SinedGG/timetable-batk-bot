@@ -1,23 +1,27 @@
 const request = require("request");
-const progress = require("request-progress");
 const fs = require("fs");
 
-const cfg = JSON.parse(fs.readFileSync("./config/main.json", "utf8"));
-
-async function r() {
+async function main(url, patch) {
   return new Promise((resolve, reject) => {
-    progress(request(cfg.url), {})
-      .on("error", (err) => {
-        reject(new Error(`[Download ERROR] Помилка завантаження файлу`, err))
+    var file = fs.createWriteStream(patch);
+    request(
+      {
+        url: url,
+        time: true,
+      },
+      (err, res) => {
+        console.log(`[Download] Request time - ${res.elapsedTime} ms`);
+      }
+    )
+      .pipe(file)
+      .on("finish", (err, response) => {
+        console.log(`[Download] Файл заавантажено успішно.`);
+        resolve();
       })
-      .on("end", () => {
-        setTimeout(() => {
-          console.log(`[Download] Файл заавантажено успішно`);
-          resolve();
-        }, 1500);
-      })
-      .pipe(fs.createWriteStream(cfg.pdfpatch));
+      .on("error", (error) => {
+        reject(new Error(`[Download ERROR] Помилка завантаження файлу`));
+      });
   });
 }
 
-module.exports = r;
+module.exports = main;

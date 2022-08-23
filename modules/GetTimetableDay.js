@@ -1,9 +1,7 @@
-
 const pdf = require("pdf-parse");
 const fs = require("fs");
-const cfg = JSON.parse(fs.readFileSync("./config/main.json", "utf8"));
 
-async function r(db) {
+async function main(cfg) {
   return new Promise((resolve) => {
     var days = [
       "понеділок",
@@ -12,6 +10,7 @@ async function r(db) {
       "четвер",
       "п'ятницю",
       "суботу",
+      "неділю",
     ];
     var day;
     let file = fs.readFileSync(cfg.pdfpatch);
@@ -27,7 +26,7 @@ async function r(db) {
         console.log(`[Parce day] не вдалось визначити день в таблиці`);
         resolve("");
       } else {
-        console.log(`[Get day] Отримання дня тижня успішне. День - ${day}`)
+        console.log(`[Get day] Отримання дня тижня успішне. День - ${day}`);
         resolve(day);
       }
     });
@@ -36,4 +35,4 @@ async function r(db) {
 
 // sendTimetable({ course: "table" }, "");
 
-module.exports = r;
+module.exports = main;

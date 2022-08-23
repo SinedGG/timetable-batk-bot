@@ -1,26 +1,23 @@
 const request = require("request");
-const fs = require("fs");
-const { rejects } = require("assert");
-
-const cfg = JSON.parse(fs.readFileSync("./config/main.json", "utf8"));
-
-function r() {
+function main(url) {
   return new Promise((resolve, reject) => {
     request(
       {
-        url: cfg.url,
+        url: url,
         method: "HEAD",
+        time: true,
       },
       (err, response) => {
-        if (err || isNaN(response.headers["content-length"])|| !response) {
+        if (err || !response || isNaN(response.headers["content-length"])) {
           reject(
-            new Error(`[Request ERROR] Неможливо отримати розмір файлу!`, err)
+            new Error(`[Request ERROR] Неможливо отримати розмір файлу з URL!`)
           );
         } else {
-          resolve(response.headers["content-length"]);
+          var file_size = response.headers["content-length"];
+          resolve({ size: file_size, time: response.elapsedTime });
         }
       }
     );
   });
 }
-module.exports = r;
+module.exports = main;
