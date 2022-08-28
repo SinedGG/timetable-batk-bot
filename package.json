@@ -8,7 +8,8 @@
     "mysql2": "^2.3.3",
     "npm": "^8.18.0",
     "pdf-parse": "^1.1.1",
-    "pdf-table-extractor": "^1.0.3",
+    "pdfjs-dist": "^2.15.349",
+    "read-excel-file": "^5.4.5",
     "request": "^2.88.2",
     "telegraf": "^4.4.2"
   },

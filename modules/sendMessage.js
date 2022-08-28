@@ -64,7 +64,7 @@ function main(bot, db, content, day) {
             console.log("Too Many Requests");
           }
         }
-        await delay(100);
+        //await delay(100);
       }
       resolve();
     }

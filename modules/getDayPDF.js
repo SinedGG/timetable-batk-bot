@@ -13,7 +13,7 @@ async function main(cfg) {
       "неділю",
     ];
     var day;
-    let file = fs.readFileSync(cfg.pdfpatch);
+    let file = fs.readFileSync(cfg.path.pdf);
 
     pdf(file).then((data) => {
       for (let index = 0; index < days.length; index++) {
@@ -32,7 +32,4 @@ async function main(cfg) {
     });
   });
 }
-
-// sendTimetable({ course: "table" }, "");
-
 module.exports = main;

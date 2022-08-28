@@ -17,25 +17,30 @@ fs.readdirSync("./commands/").forEach((file) => {
   require(`./commands/${file}`)(bot, db);
 });
 
-const cfg = JSON.parse(fs.readFileSync("./config/main.json", "utf8"));
-
 const get_file_size = require("./modules/fileSizreByURL");
 const download_file = require("./modules/downloadFileFromURL");
-const get_last_day = require("./modules/GetLastDay");
-const get_day = require("./modules/GetTimetableDay");
-const parse_pdf = require("./modules/parcePDF");
-const separate_table = require("./modules/SeparateTable");
-const rewrite_table = require("./modules/RewriteTable");
-const send_table = require("./modules/sendMessage");
+const get_day_pdf = require("./modules/getDayPDF");
+const get_day_xls = require("./modules/getDayXLS");
+const parse_xls = require("./modules/parseXLS");
+const send_table = require("./modules/send/send_table");
+const send_group = require("./modules/send/send_group");
+const send_teacher = require("./modules/send/send_teacher");
+
+/*
 
 init();
 async function init() {
   console.log(`[Initialization] Ініціалізація.`);
   try {
-    var [[{ value: old_size }]] = await db.query(
-      `SELECT value FROM properties WHERE type='OldFileSize' `
+    var [[{ value: old_pdf_size }]] = await db.query(
+      `SELECT value FROM properties WHERE type='old_pdf_size'`
     );
-    main(old_size);
+
+    var [[{ value: old_xls_size }]] = await db.query(
+      `SELECT value FROM properties WHERE type='old_xls_size'`
+    );
+    pdf(old_pdf_size);
+    xls(old_xls_size);
   } catch (error) {
     console.log(`[DB Error] Помилка отримаання розміру файла з бази даних!`);
     setTimeout(() => {
@@ -44,33 +49,71 @@ async function init() {
   }
 }
 
-async function main(old_size) {
+async function pdf(old_size) {
   try {
-    var new_size = await get_file_size(bot.cfg.url);
+    var new_size = await get_file_size(bot.cfg.url.pdf);
     if (old_size != new_size.size) {
       console.log(
-        `[File size] Old size - ${old_size} : New size ${new_size.size} Request time - ${new_size.time}`
+        `[File size PDF] Old size - ${old_size} : New size ${new_size.size} Request time - ${new_size.time}`
       );
-      await download_file(bot.cfg.url, bot.cfg.pdfpatch);
-      var day = await get_day(bot.cfg);
-      await send_table(bot, db, { course: "table" }, day);
+      await download_file(bot.cfg.url.pdf, bot.cfg.path.pdf);
+      var day = await get_day_pdf(bot.cfg);
+      var [[{ value: last_day }]] = await db.query(
+        `SELECT * FROM properties where type='last_days'`
+      );
+      await send_table(bot, db, bot.cfg, day, last_day);
       old_size = new_size.size;
       await db.query(`
-      UPDATE properties SET value = ${new_size.size} WHERE type='OldFileSize';
+      UPDATE properties SET value = ${new_size.size} WHERE type='old_pdf_size';
       update properties set value = "${day}" where type='last_days'`);
       setTimeout(() => {
-        main(old_size);
-      }, 120 * 1000);
+        pdf(old_size);
+      }, 10 * 1000);
     } else {
       setTimeout(() => {
-        main(old_size);
-      }, 30 * 1000);
+        pdf(old_size);
+      }, 10 * 1000);
     }
   } catch (error) {
     console.log(error.message);
     setTimeout(() => {
-      main(old_size);
-    }, 60 * 1000);
+      pdf(old_size);
+    }, 50 * 1000);
+  }
+}
+
+async function xls(old_size) {
+  try {
+    var new_size = await get_file_size(bot.cfg.url.xls);
+    if (old_size != new_size.size) {
+      console.log(
+        `[File size XLS] Old size - ${old_size} : New size ${new_size.size} Request time - ${new_size.time}`
+      );
+      await download_file(bot.cfg.url.xls, bot.cfg.path.xls);
+      var day = await get_day_xls(bot.cfg);
+      await parse_xls(db, bot.cfg);
+      var [[{ value: last_day }]] = await db.query(
+        `SELECT * FROM properties where type='last_days'`
+      );
+      send_group(bot, db, bot.cfg, day, last_day);
+      send_teacher(bot, db, bot.cfg, day, last_day);
+      old_size = new_size.size;
+      await db.query(`
+      UPDATE properties SET value = ${new_size.size} WHERE type='old_xls_size';
+      update properties set value = "${day}" where type='last_days'`);
+      setTimeout(() => {
+        xls(old_size);
+      }, 10 * 1000);
+    } else {
+      setTimeout(() => {
+        xls(old_size);
+      }, 10 * 1000);
+    }
+  } catch (error) {
+    console.log(error.message);
+    setTimeout(() => {
+      xls(old_size);
+    }, 50 * 1000);
   }
 }
 
@@ -84,3 +127,6 @@ process.on("uncaughtException",  (err) => {
   console.log("err");
 });
 */
+
+var test = require("./modules/parcePDF");
+test(db, bot.cfg);

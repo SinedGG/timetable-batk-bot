@@ -1,9 +1,9 @@
 const request = require("request");
 const fs = require("fs");
 
-async function main(url, patch) {
+async function main(url, path) {
   return new Promise((resolve, reject) => {
-    var file = fs.createWriteStream(patch);
+    var file = fs.createWriteStream(path);
     request(
       {
         url: url,

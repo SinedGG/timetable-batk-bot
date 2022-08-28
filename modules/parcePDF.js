@@ -1,43 +1,46 @@
-const pdf_table_extractor = require("pdf-table-extractor");
-
+const PDFJS = require("pdfjs-dist/build/pdf.js");
+const fs = require("fs");
+const parse = require("./assemble_table.js");
 function main(db, cfg) {
-  return new Promise((resolve, reject) => {
-    pdf_table_extractor(cfg.pdfpatch, success, error);
-    console.log(`[Parce PDF] Початок парсингу файлу.`);
-
-    async function success(result) {
-      var table = result.pageTables[0].tables;
-      var output = [];
-      for (var i = 0; i < table.length; i++) {
-        var temp = [];
-        if (table[i][0] != "" && table[i][0] != "Група") {
-          for (let j = 0; j < 11; j++) {
-            var s = "";
-            if (table[i][j]) s = table[i][j].replace(/\s+/g, "").trim();
-            temp.push(s);
-          }
-          output.push(temp);
-        }
-      }
-      await db
-        .query(
-          `TRUNCATE table timetable_old;
-        INSERT INTO timetable_old SELECT * FROM  timetable;
-        TRUNCATE table timetable;
-        INSERT timetable VALUES ?`,
-          [output]
-        )
-        .catch((err) => {
-          reject(new Error(`[DB ERROR] Помилка даних під час парсингу`, err));
-          console.log(err);
-        });
-      console.log(`[Parce PDF] Парсинг успішний.`);
-      resolve(output);
-    }
-
-    function error(err) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      var file = fs.readFileSync(cfg.path.pdf);
+      var data = new Uint8Array(file);
+      var doc = await PDFJS.getDocument(data).promise;
+    } catch (err) {
+      console.log(err);
       reject(new Error(`[Parce ERROR] Помилка парсингу pdf файлу`, err));
     }
+
+    var table = await parse(PDFJS, doc);
+    var output = [];
+    for (var i = 0; i < table.length; i++) {
+      var temp = [];
+      if (table[i][0] != "" && table[i][0] != "Група") {
+        for (let j = 0; j < 16; j++) {
+          var s = "";
+          if (table[i][j]) s = table[i][j].replace(/\s+/g, " ").trim();
+          temp.push(s);
+        }
+        output.push(temp);
+      }
+    }
+
+    await db
+      .query(
+        `
+        TRUNCATE table timetable_xls_old;
+        INSERT INTO timetable_xls_old SELECT * FROM  timetable_xls;
+        TRUNCATE table timetable_xls;
+        INSERT timetable_xls VALUES ?`,
+        [output]
+      )
+      .catch((err) => {
+        reject(new Error(`[DB ERROR] Помилка даних під час парсингу`, err));
+        console.log(err);
+      });
+    console.log(`[Parce PDF] Парсинг успішний.`);
+    resolve(output);
   });
 }
 

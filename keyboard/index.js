@@ -84,7 +84,7 @@ async function main(bot, db) {
       }
     })
     .hears("👨‍🎓 Вибір групи", async (ctx) => {
-      var [groups] = await db.query(`SELECT course FROM timetable`);
+      var [groups] = await db.query(`SELECT course FROM timetable_xls`);
       var keyboard = [];
       groups.forEach((group) => {
         keyboard.push([
@@ -221,7 +221,7 @@ async function main(bot, db) {
         `[Notification] Завантаження файлу ${log_text} для користувача ${ctx.chat.username} (${ctx.chat.id})`
       );
     } else {
-      var [groups] = await db.query(`SELECT course FROM timetable`);
+      var [groups] = await db.query(`SELECT course FROM timetable_xls`);
 
       groups.forEach((group) => {
         if (ctx.callbackQuery.data == group.course) {
