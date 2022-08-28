@@ -16,7 +16,7 @@ function main(db, cfg) {
     var output = [];
     for (var i = 0; i < table.length; i++) {
       var temp = [];
-      if (table[i][0] != "" && table[i][0] != "Група") {
+      if (typeof table[i][0] == "string" && table[i][0].includes("-")) {
         for (let j = 0; j < 16; j++) {
           var s = "";
           if (table[i][j]) s = table[i][j].replace(/\s+/g, " ").trim();

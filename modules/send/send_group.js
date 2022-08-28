@@ -1,3 +1,4 @@
+const send = require("./send");
 function main(bot, db, cfg, day, last_day) {
   return new Promise(async (resolve, reject) => {
     var [t_new] = await db.query(`select * from timetable_xls`);
@@ -51,45 +52,12 @@ function main(bot, db, cfg, day, last_day) {
               text += `\n${content.lesson4} [ ${content.class4} ] ${content.teacher4}`;
               if (content.lesson5)
                 text += `\n${content.lesson5} [ ${content.class5} ] ${content.teacher5}`;
+
               console.log(
                 `[Send] Спроба надсилання розкладу для - ${users[i].chat_id}, група - ${content.course}`
               );
-
-              try {
-                if (users[i].download_file) {
-                  bot.telegram.sendDocument(
-                    users[i].chat_id,
-                    { source: cfg.path.pdf },
-                    {
-                      disable_notification: disable_notification,
-                      caption: text,
-                    }
-                  );
-                } else {
-                  bot.telegram.sendMessage(users[i].chat_id, text, {
-                    disable_notification: disable_notification,
-                  });
-                }
-              } catch (err) {
-                if (
-                  err.message.includes(
-                    "403: Forbidden: bot was blocked by the user"
-                  )
-                ) {
-                  var user = err.on.payload.chat_id;
-                  await db.query(`DELETE FROM users WHERE chat_id =${user}`);
-                  console.log(
-                    `[DB] Користувача ${user} видалено з бази даних у зв'язку з блокуванням`
-                  );
-                }
-                if (
-                  err.message.includes("429: Too Many Requests: retry after")
-                ) {
-                  console.log("Too Many Requests");
-                }
-              }
-
-              await delay(500);
+              send(bot, cfg, users[i], text, disable_notification);
+              await delay(50);
             }
           }
         }

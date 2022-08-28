@@ -10,7 +10,7 @@ function main(bot, db) {
         24
     );
     console.log(
-      `[Command] Користувач ${ctx.message.chat.username} (${ctx.message.chat.id}) використав команду /stats`
+      `[Command] Користувач ${ctx.chat.username} (${ctx.chat.id}) використав команду /stats`
     );
     ctx
       .reply(

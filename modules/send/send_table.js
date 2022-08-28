@@ -1,3 +1,5 @@
+const send = require("./send");
+
 function main(bot, db, cfg, day, last_day) {
   return new Promise(async (resolve) => {
     var [users] = await db.query(
@@ -26,31 +28,7 @@ function main(bot, db, cfg, day, last_day) {
           `[Send] Спроба надсилання розкладу для - ${users[i].chat_id}, група - table`
         );
 
-        bot.telegram
-          .sendDocument(
-            users[i].chat_id,
-            { source: cfg.path.pdf },
-            {
-              disable_notification: disable_notification,
-              caption: text,
-            }
-          )
-          .catch((err) => {
-            if (
-              err.message.includes(
-                "403: Forbidden: bot was blocked by the user"
-              )
-            ) {
-              var user = err.on.payload.chat_id;
-              db.query(`DELETE FROM users WHERE chat_id =${user}`);
-              console.log(
-                `[DB] Користувача ${user} видалено з бази даних у зв'язку з блокуванням.`
-              );
-            }
-            if (err.message.includes("429: Too Many Requests: retry after")) {
-              console.log("Too Many Requests");
-            }
-          });
+        send(bot, cfg, users[i], text, disable_notification);
 
         await delay(100);
       }

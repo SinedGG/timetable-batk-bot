@@ -1,6 +1,9 @@
 async function main(bot, db) {
   bot
     .hears("⚙️ Налаштування", async (ctx) => {
+      console.log(
+        `[Keyboard] Користувач ${ctx.chat.username} (${ctx.chat.id}) використав кнопку ⚙️ Налаштування`
+      );
       var [user] = await db.query(
         `SELECT chat_id FROM users WHERE chat_id=${ctx.chat.id}`
       );
@@ -8,7 +11,9 @@ async function main(bot, db) {
         ctx.telegram
           .sendMessage(ctx.chat.id, "🔧 Виберіть опцію", {
             reply_markup: {
-              keyboard: [[{ text: "📅 Розклад" }, { text: "🔔 Сповіщення" }]],
+              keyboard: [
+                [{ text: "📅 Розклад" }, { text: "🔔 Сповіщення та інше" }],
+              ],
               resize_keyboard: true,
             },
           })
@@ -22,6 +27,9 @@ async function main(bot, db) {
       }
     })
     .hears("📈 Статистика", async (ctx) => {
+      console.log(
+        `[Keyboard] Користувач ${ctx.chat.username} (${ctx.chat.id}) використав кнопку 📈 Статистика`
+      );
       var [rows] = await db
         .query("SELECT chat_id FROM users")
         .catch((err) => {});
@@ -33,9 +41,6 @@ async function main(bot, db) {
           60 /
           24
       );
-      console.log(
-        `[Command] Користувач ${ctx.message.chat.username} (${ctx.message.chat.id}) використав команду /stats`
-      );
       ctx
         .reply(
           `Працює безперервно - ${days}  📈\nКористувачів підписано - ${users_count} 👨‍🎓`
@@ -43,14 +48,15 @@ async function main(bot, db) {
         .catch((err) => {});
     })
     .hears("📅 Розклад", (ctx) => {
+      console.log(
+        `[Keyboard] Користувач ${ctx.chat.username} (${ctx.chat.id}) використав кнопку налаштування розкладу`
+      );
       ctx.telegram
         .sendMessage(ctx.chat.id, "🔧 Виберіть опцію", {
           reply_markup: {
             keyboard: [
-              [
-                { text: "👨‍🎓 Вибір групи" },
-                { text: "📅 Отримувати розклад-таблицю" },
-              ],
+              [{ text: "👨‍🎓 Вибір групи" }, { text: "👩🏻‍🏫 Для викладачів" }],
+              [{ text: "📅 Отримувати розклад-таблицю" }],
             ],
             resize_keyboard: true,
           },
@@ -103,7 +109,20 @@ async function main(bot, db) {
         })
         .catch((err) => {});
     })
-    .hears("🔔 Сповіщення", async (ctx) => {
+    .hears("👩🏻‍🏫 Для викладачів", async (ctx) => {
+      console.log(
+        `[Keyboard] Користувач ${ctx.chat.username} (${ctx.chat.id}) використав кнопку 👩🏻‍🏫 Для викладачів`
+      );
+      ctx
+        .reply(
+          `⚡️Ви можете отримувати розклад тільки тоді коли вас буде згадано у розклад-таблиці.\n⚙️Для налаштування використайте команду '/st Ваше прізвище' (команда не чутлива до регістру)`
+        )
+        .catch((err) => {});
+    })
+    .hears("🔔 Сповіщення та інше", async (ctx) => {
+      console.log(
+        `[Keyboard] Користувач ${ctx.chat.username} (${ctx.chat.id}) використав кнопку 🔔 Сповіщення та інше`
+      );
       var [setting] = await db.query(
         `SELECT notification_n, notification_z, download_file FROM users WHERE chat_id=${ctx.chat.id}`
       );
@@ -117,7 +136,7 @@ async function main(bot, db) {
       if (setting[0].download_file) set3 = "✔️";
 
       ctx.telegram
-        .sendMessage(ctx.chat.id, "⚙️*Налаштування сповіщень*", {
+        .sendMessage(ctx.chat.id, "⚙️*Налаштування сповіщень та файлів*", {
           parse_mode: "markdown",
           reply_markup: {
             inline_keyboard: [
@@ -193,7 +212,6 @@ async function main(bot, db) {
         `SELECT group_type FROM users WHERE chat_id=${ctx.chat.id}`
       );
       if (group_type == "table") {
-        console.log("nope");
         return ctx
           .reply(
             `Ви не можете змінити дану опцію використовуючи розклалд-таблицю.`
