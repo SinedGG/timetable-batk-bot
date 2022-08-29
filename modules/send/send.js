@@ -1,5 +1,4 @@
 async function main(bot, db, cfg, users, text, disable_notification) {
-  console.log(users);
   try {
     if (users.download_file) {
       await bot.telegram.sendDocument(
