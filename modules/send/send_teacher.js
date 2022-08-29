@@ -59,14 +59,14 @@ function main(bot, db, cfg, day, last_day) {
             console.log(
               `[Send] Спроба надсилання розкладу для - ${users[i].chat_id}, група - teacher, прізвище - ${name}`
             );
-            send(bot, cfg, users[i], text, disable_notification);
+            send(bot, db, cfg, users[i], text, disable_notification);
           }
           await delay(100);
         } catch (error) {
           console.log(error);
           if (text == null) text = "Новий розклад📚";
           if (disable_notification == null) disable_notification = false;
-          send(bot, cfg, users[i], text, disable_notification);
+          send(bot, db, cfg, users[i], text, disable_notification);
         }
       }
       resolve();

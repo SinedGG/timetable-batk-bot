@@ -1,7 +1,8 @@
-async function main(bot, cfg, users, text, disable_notification) {
+async function main(bot, db, cfg, users, text, disable_notification) {
+  console.log(users);
   try {
     if (users.download_file) {
-      bot.telegram.sendDocument(
+      await bot.telegram.sendDocument(
         users.chat_id,
         { source: cfg.path.pdf },
         {
@@ -10,7 +11,7 @@ async function main(bot, cfg, users, text, disable_notification) {
         }
       );
     } else {
-      bot.telegram.sendMessage(users.chat_id, text, {
+      await bot.telegram.sendMessage(users.chat_id, text, {
         disable_notification: disable_notification,
       });
     }

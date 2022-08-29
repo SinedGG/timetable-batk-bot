@@ -56,7 +56,7 @@ function main(bot, db, cfg, day, last_day) {
               console.log(
                 `[Send] Спроба надсилання розкладу для - ${users[i].chat_id}, група - ${content.course}`
               );
-              send(bot, cfg, users[i], text, disable_notification);
+              send(bot, db, cfg, users[i], text, disable_notification);
               await delay(50);
             }
           }
