@@ -16,16 +16,20 @@ function main(db, cfg) {
     var output = [];
     for (var i = 0; i < table.length; i++) {
       var temp = [];
+      var s = "";
       if (typeof table[i][0] == "string" && table[i][0].includes("-")) {
-        for (let j = 0; j < 16; j++) {
-          var s = "";
+        if (table[i][0]) {
+          s = table[i][0].replace(/\s+/g, "").trim();
+          temp.push(s);
+        }
+        for (let j = 1; j < 16; j++) {
+          s = "";
           if (table[i][j]) s = table[i][j].replace(/\s+/g, " ").trim();
           temp.push(s);
         }
         output.push(temp);
       }
     }
-
     await db
       .query(
         `
