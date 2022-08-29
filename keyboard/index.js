@@ -247,7 +247,7 @@ async function main(bot, db) {
             `UPDATE users SET group_type='${ctx.callbackQuery.data}' WHERE chat_id=${ctx.chat.id}`
           );
           console.log(
-            `[Group] Встановлено групу ${ctx.callbackQuery.data} для користувача ${ctx.chat.id}`
+            `[Group] Встановлено групу ${ctx.callbackQuery.data} для користувача${ctx.chat.id} (${ctx.chat.id})`
           );
           ctx
             .editMessageText("⚙️ Налаштування групи", {
