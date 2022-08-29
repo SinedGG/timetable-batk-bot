@@ -16,14 +16,18 @@ async function main(bot, db, cfg, users, text, disable_notification) {
     }
   } catch (err) {
     console.log(err);
+    var user = err.on.payload.chat_id;
     if (err.message.includes("403: Forbidden: bot was blocked by the user")) {
-      var user = err.on.payload.chat_id;
       await db.query(`DELETE FROM users WHERE chat_id =${user}`);
       console.log(
         `[DB] Користувача ${user} видалено з бази даних у зв'язку з блокуванням`
       );
-    }
-    if (err.message.includes("429: Too Many Requests: retry after")) {
+    } else if (err.message.includes("Forbidden: user is deactivated")) {
+      await db.query(`DELETE FROM users WHERE chat_id =${user}`);
+      console.log(
+        `[DB] Користувача ${user} видалено з бази даних, аккаунт не активний`
+      );
+    } else if (err.message.includes("429: Too Many Requests: retry after")) {
       console.log("Too Many Requests");
     }
   }
