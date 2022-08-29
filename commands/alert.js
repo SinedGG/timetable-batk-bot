@@ -7,7 +7,12 @@ function main(bot, db) {
       var content = ctx.message.text.replace("/alert ", "");
       var [users] = await db.query(`SELECT * FROM users`);
       for (let i = 0; i < users.length; i++) {
-        bot.telegram.sendMessage(users[i].chat_id, content);
+        console.log(
+          `[Alert] Спроба надсилання повідомлення для - ${users[i].chat_id}`
+        );
+        bot.telegram.sendMessage(users[i].chat_id, content).catch((err) => {
+          console.log(err);
+        });
         await delay(100);
       }
     }
