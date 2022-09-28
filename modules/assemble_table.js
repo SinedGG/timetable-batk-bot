@@ -1,3 +1,4 @@
+// modify from https://github.com/ronnywang/pdf-table-extractor/blob/master/pdf-table-extractor.js
 function parse(PDFJS, doc) {
   return new Promise(async (resolve) => {
     var pageNum = 1; // only 1 page
