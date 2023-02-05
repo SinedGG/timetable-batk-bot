@@ -8,6 +8,8 @@ const { Telegraf } = require("telegraf"),
   cfg = require("./config.js"),
   schedule = require("node-schedule");
 
+const delay = require("node:timers/promises").setTimeout;
+
 const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -114,6 +116,8 @@ async function main(old_size) {
               console.log("Too Many Requests");
             }
           });
+
+        await delay(100);
       }
 
       old_size = new_size;
