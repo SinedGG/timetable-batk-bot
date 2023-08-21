@@ -81,6 +81,8 @@ function cycle(size, sec) {
 
 bot.launch();
 
+require("./modules/dailyMailing.js")(bot, db);
+
 /*
 process.on("uncaughtException",  (err) => {
   console.log("err");
