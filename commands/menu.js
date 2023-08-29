@@ -1,17 +1,10 @@
-function main(bot) {
-  bot.command("menu", (ctx) => {
+module.exports = {
+  name: "menu",
+  async execute(ctx) {
+    const { keyboard } = require("../keyboard/menu");
+    ctx.reply("Меню 📋", keyboard);
     console.log(
-      `[Command] Користувач ${ctx.chat.username} (${ctx.chat.id}) використав команду /menu`
+      `[Command] Користувач ${ctx.from.username} (${ctx.from.id}) використав команду /menu`
     );
-    ctx.telegram
-      .sendMessage(ctx.chat.id, "Меню 📋", {
-        reply_markup: {
-          keyboard: [[{ text: "📈 Статистика" }, { text: "⚙️ Налаштування" }]],
-          resize_keyboard: true,
-        },
-      })
-      .catch((err) => {});
-  });
-}
-
-module.exports = main;
+  },
+};
