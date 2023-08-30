@@ -6,5 +6,6 @@ require("./handler/command")(bot);
 require("./handler/keyboard")(bot);
 
 require("./modules/fileMonitor")(bot);
+require("./modules/dailyMailing")(bot);
 
 bot.launch();
