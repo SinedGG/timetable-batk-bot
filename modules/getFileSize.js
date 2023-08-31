@@ -3,7 +3,9 @@ module.exports = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const startTime = new Date();
-      const res = await axios.get(process.env.TIMETABLE_URL);
+      const res = await axios.get(process.env.TIMETABLE_URL, {
+        timeout: 5000,
+      });
       const fileSize = res.headers["content-length"];
       const endTime = new Date();
 
@@ -13,7 +15,8 @@ module.exports = () => {
         elapsedTime,
       });
     } catch (e) {
-      reject(e);
+      console.log(e.message);
+      reject(new Error(`[Request ERROR] Unable to get file size from URL`));
     }
   });
 };
