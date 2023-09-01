@@ -30,16 +30,16 @@ module.exports = async (bot) => {
       await Promise.all([tableProm, groupProm]);
 
       await timetable.set(parsedTable);
-      cycle(bot);
-    }
+      cycle(bot, 120);
+    } else cycle(bot, 60);
   } catch (e) {
     console.log(e);
-    cycle(bot);
+    cycle(bot, 120);
   }
 };
 
-function cycle(bot) {
+function cycle(bot, time) {
   setTimeout(() => {
     require("./fileMonitor")(bot);
-  }, 30 * 1000);
+  }, time * 1000);
 }
