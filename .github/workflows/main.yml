@@ -5,9 +5,9 @@ on: workflow_dispatch
 env:
   SERVER_HOST: ${{ secrets.SERVER_IP }}
   SERVER_USER: ubuntu
-  SERVER_PATH: /home/ubuntu/pm/timetable-batk-bot
+  SERVER_PATH: /home/ubuntu/pm/batk-bot
 
-  CONFIG_LOCATION: /home/ubuntu/config/timetable-batk-bot.config.js
+  CONFIG_LOCATION: /home/ubuntu/config/batk-bot.config.js
 
 jobs:
   deploy:
