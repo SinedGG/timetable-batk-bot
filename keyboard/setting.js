@@ -6,6 +6,9 @@ module.exports = {
     .oneTime(),
   execute(bot) {
     bot.hears("📅 Розклад", async (ctx) => {
+      const subscribed = await require("../modules/ifUserSubscribed")(ctx);
+      if (!subscribed) return;
+
       const { keyboard } = require("./timetable");
       ctx.reply("🔧 Виберіть опцію", keyboard);
     });

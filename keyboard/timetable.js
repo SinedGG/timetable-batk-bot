@@ -8,11 +8,17 @@ module.exports = {
     .oneTime(),
   execute(bot) {
     bot.hears("👨‍🎓 Вибір групи", async (ctx) => {
+      const subscribed = await require("../modules/ifUserSubscribed")(ctx);
+      if (!subscribed) return;
+
       const getKeyboard = require("./changeGroup").keyboard;
       const keyboard = await getKeyboard();
       ctx.reply("👨‍🎓 Виберіть групу з списку:", keyboard);
     });
     bot.hears("📅 Отримувати розклад-таблицю", async (ctx) => {
+      const subscribed = await require("../modules/ifUserSubscribed")(ctx);
+      if (!subscribed) return;
+
       const { setGroup } = require("../models/user");
       await setGroup(ctx.from.id, "table");
       console.log(

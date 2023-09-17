@@ -6,12 +6,9 @@ module.exports = {
     .oneTime(),
   execute(bot) {
     bot.hears("⚙️ Налаштування", async (ctx) => {
-      const fingUser = require("../models/user").getOne;
-      const user = await fingUser(ctx.from.id);
-      if (!user)
-        return ctx.reply(
-          "Ви не можете відкрити налаштування коли вас немає у базі даних. Для старту використайте /start"
-        );
+      const subscribed = await require("../modules/ifUserSubscribed")(ctx);
+      console.log(subscribed);
+      if (!subscribed) return;
 
       const { keyboard } = require("./setting");
       ctx.reply("🔧 Виберіть опцію", keyboard);

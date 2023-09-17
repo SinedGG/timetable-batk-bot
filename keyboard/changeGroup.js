@@ -14,6 +14,9 @@ module.exports = {
   },
   execute(bot) {
     bot.on("callback_query", async (ctx) => {
+      const subscribed = await require("../modules/ifUserSubscribed")(ctx);
+      if (!subscribed) return;
+
       const callbackData = ctx.update.callback_query.data;
       if (!callbackData.includes("groupChange")) return;
       const buttonText = ctx.update.callback_query.data.replace(
