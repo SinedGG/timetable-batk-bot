@@ -1,23 +1,18 @@
-function main(bot, db) {
-  bot.command("stats", async (ctx) => {
-    var [rows] = await db.query("SELECT chat_id FROM users");
-    var users_count = rows.length;
+module.exports = {
+  name: "stats",
+  async execute(ctx) {
+    const getUserCount = require("../models/user").stats;
+    const userCount = await getUserCount();
+    const startDate = await require("../models/vars").get("start-date");
     var days = Math.ceil(
-      (new Date().getTime() - new Date(bot.cfg.start_date).getTime()) /
+      (new Date().getTime() - new Date(startDate.value).getTime()) /
         1000 /
         60 /
         60 /
         24
     );
-    console.log(
-      `[Command] Користувач ${ctx.chat.username} (${ctx.chat.id}) використав команду /stats`
+    ctx.reply(
+      `Працює безперервно - ${days}  📈\nКористувачів підписано - ${userCount} 👨‍🎓`
     );
-    ctx
-      .reply(
-        `Працює безперервно - ${days}  📈\nКористувачів підписано - ${users_count} 👨‍🎓`
-      )
-      .catch((err) => {});
-  });
-}
-
-module.exports = main;
+  },
+};

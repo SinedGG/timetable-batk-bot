@@ -5,10 +5,13 @@ on: workflow_dispatch
 env:
   SERVER_HOST: ${{ secrets.SERVER_IP }}
   SERVER_USER: ubuntu
-  SERVER_PATH: /home/ubuntu/pm/timetable-batk-bot
+  SERVER_PATH: /home/ubuntu/pm/batk-bot
+
+  CONFIG_LOCATION: /home/ubuntu/config/batk-bot.config.js
 
 jobs:
   deploy:
+    name: Deploy and Build
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,3 +30,11 @@ jobs:
       - run: npm ci
       # Deploy
       - run: rsync -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress --delete . ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_PATH }}
+      # Executing remote ssh commands
+      - name: Execute remote SSH command
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ env.SERVER_HOST }}
+          username: ${{ env.SERVER_USER }}
+          key: ${{ secrets.ACTION_KEY }}
+          script: cd ${{env.SERVER_PATH}} && npx prisma generate && pm2 reload ${{env.CONFIG_LOCATION}} && pm2 save

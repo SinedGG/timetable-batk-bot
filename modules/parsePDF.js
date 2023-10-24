@@ -1,36 +1,27 @@
-const PDFJS = require("pdfjs-dist/build/pdf.js");
-const fs = require("fs");
-const parse = require("./assemble_table.js");
-function main(db, cfg) {
+module.exports = () => {
   return new Promise(async (resolve, reject) => {
-    try {
-      var file = fs.readFileSync(cfg.path.pdf);
-      var data = new Uint8Array(file);
-      var doc = await PDFJS.getDocument(data).promise;
-    } catch (err) {
-      console.log(err);
-      reject(new Error(`[Parce ERROR] Помилка парсингу pdf файлу`, err));
-    }
+    const PDFJS = require("pdfjs-dist/build/pdf.js");
+    const parse = require("./assemble_table.js");
 
+    var doc = await PDFJS.getDocument("./temp/zm.pdf").promise;
     var table = await parse(PDFJS, doc);
-    var output = table.slice(2);
+    const arr = [];
 
-    await db
-      .query(
-        `
-        TRUNCATE table timetable_xls_old;
-        INSERT INTO timetable_xls_old SELECT * FROM  timetable_xls;
-        TRUNCATE table timetable_xls;
-        INSERT timetable_xls VALUES ?`,
-        [output]
-      )
-      .catch((err) => {
-        reject(new Error(`[DB ERROR] Помилка даних під час парсингу`, err));
-        console.log(err);
-      });
-    console.log(`[Parce PDF] Парсинг успішний.`);
-    resolve(output);
+    table.forEach((row) => {
+      if (!row[0] || row[0].replace(/\s+/g, "").trim() == "Група") return;
+      const obj = {
+        group: row[0].replace(/\s+/g, "").trim(),
+        lessons: [],
+      };
+      for (let i = 1; i < row.length; i += 3) {
+        obj.lessons.push({
+          cabinet: row[i + 2].replace(/\s+/g, " ").trim(),
+          subject: row[i].replace(/\s+/g, " ").trim(),
+          teacher: row[i + 1].replace(/\s+/g, " ").trim(),
+        });
+      }
+      arr.push(obj);
+    });
+    resolve(arr);
   });
-}
-
-module.exports = main;
+};

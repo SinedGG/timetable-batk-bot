@@ -1,14 +1,14 @@
-module.exports = (bot, db) => {
+module.exports = (bot) => {
   const schedule = require("node-schedule");
 
-  schedule.scheduleJob("0 0 6 * * *", async () => {
-    var [users] = await db.query(`SELECT * FROM users `);
+  schedule.scheduleJob("0 58 5 * * *", async () => {
+    const users = await require("../models/user").getAll();
     if (users.length == 0) return;
     for (var i = 0; i < users.length; i++) {
       await bot.telegram
         .sendPhoto(
-          users[i].chat_id,
-          { source: "./file/silence.jpg" },
+          users[i].tg_id.toString(),
+          { source: "./temp/silence.jpg" },
           {
             disable_notification: true,
           }
@@ -17,7 +17,9 @@ module.exports = (bot, db) => {
           console.log(err);
         });
       console.log(
-        `[dailyMailing] Спроба надсилання розсилки для - ${users[i].chat_id}`
+        `[dailyMailing] Спроба надсилання розсилки для - ${users[
+          i
+        ].tg_id.toString()}`
       );
     }
   });

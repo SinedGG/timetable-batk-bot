@@ -1,15 +1,16 @@
-function main(bot, db) {
-  bot.command("stop", (ctx) => {
-    db.query(`DELETE FROM users WHERE chat_id =${ctx.message.chat.id}`);
-    console.log(
-      `[Command] Користувача ${ctx.message.chat.username} (${ctx.message.chat.id}) видалено з бази даних.`
-    );
-    bot.telegram
-      .sendMessage(ctx.message.chat.id, "👌", {
-        reply_markup: { remove_keyboard: true },
-      })
-      .catch((err) => {});
-  });
-}
+module.exports = {
+  name: "stop",
+  async execute(ctx) {
+    const deleteUser = require("../models/user").delete;
 
-module.exports = main;
+    try {
+      await deleteUser(ctx.from.id);
+      console.log(
+        `[Command] User ${ctx.from.username} (${ctx.from.id}) deleted from database.`
+      );
+      ctx.reply("👌");
+    } catch (err) {
+      if (err.code == "P2025") ctx.reply(`Упс... Здається вас немає у базі.`);
+    }
+  },
+};
